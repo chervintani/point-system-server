@@ -1,9 +1,10 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const PORT = process.env.PORT||3000;
+const PORT = process.env.PORT || 3000;
 const adminApi = require("./routes/admin-route");
 const userApi = require("./routes/user-route");
+const imageApi = require("./routes/image-upload");
 const app = express();
 const mongoose = require("mongoose");
 const Nexmo = require("nexmo");
@@ -13,14 +14,19 @@ const config = require("./config.json");
 //   origin: 'http://localhost:8080',
 //   optionsSuccessStatus: 200 // 204
 // }
+const nexmo = new Nexmo({
+  apiKey: config.nexmo_config.apiKey,
+  apiSecret: config.nexmo_config.apiSecret,
+});
 app.use(bodyParser.json());
 app.use(cors());
 app.use("/api", adminApi);
 app.use("/api", userApi);
+app.use("/api", imageApi);
 
 app.get("/", (req, res) => {
   // console.log(config.nexmo_config.apiKey);
-  res.send("we are live!")
+  res.send("we are live!");
 });
 
 mongoose.connect(
@@ -40,11 +46,6 @@ mongoose.connect(
   }
 );
 
-// const nexmo = new Nexmo({
-//   apiKey: config.nexmo_config.apiKey,
-//   apiSecret: config.nexmo_config.apiSecret,
-// });
-
 // const from = "REWARDSHUB";
 // const to = "639304030197";
 // const text =
@@ -58,6 +59,6 @@ mongoose.connect(
 //   }
 // });
 
-app.listen(PORT, '0.0.0.0' ,function () {
+app.listen(PORT, "0.0.0.0", function () {
   console.log("Server running on localhost: " + PORT);
 });

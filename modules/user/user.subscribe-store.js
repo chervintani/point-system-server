@@ -2,6 +2,7 @@ let Model = require("../../models/user");
 let errorResponse = require("../../helpers/error-response");
 let successResponse = require("../../helpers/success-response");
 let response = null;
+let feedsActivity = require("../../helpers/feeds-activity");
 
 module.exports = (req, res) => {
   Model.User.findById(req.params.user_id, { password: 0 }, (err, user) => {
@@ -9,12 +10,12 @@ module.exports = (req, res) => {
       response = errorResponse(500, err, "Cannot find user!");
       return res.status(response.status).send(response);
     }
-
     Model.Establishment.findById(req.params.store_id, (err, establishment) => {
       if (err) {
         response = errorResponse(500, err, "Unable find establishment!");
         return res.status(response.status).send(response);
       }
+      const establishmentModel = new Model.Establishment(establishment);
       let activity = feedsActivity(
         "Subscribed a store",
         `${user.firstname} subscribed ${establishment.name}.`,
@@ -23,8 +24,9 @@ module.exports = (req, res) => {
       );
       user.feeds_activity.push(activity);
       user.subscribed_stores.push({
-        establishment_id: req.params.store_id,
+        establishment: establishmentModel,
         points: 0,
+        date_subscribed: new Date()
       });
 
       user.save((err, data) => {

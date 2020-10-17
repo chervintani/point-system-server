@@ -13,10 +13,11 @@ const userSchema = new Schema({
   employee: new mongoose.Schema({ status: Boolean, establishment_id: Object }),
   establishments: [{ type: Schema.Types.ObjectId, ref: "Establishment" }],
   subscribed_stores: [
-    new mongoose.Schema({
-      establishment_id: String,
+    {
+      establishment: { type: Schema.Types.ObjectId, ref: "Establishment" },
       points: Number,
-    }),
+      date_subscribed: String,
+    },
   ],
   rewards: [
     new mongoose.Schema({
@@ -59,28 +60,38 @@ const establishmentSchema = new Schema({
     },
     location: {
       street: String,
+      barangay: String,
       city_town: String,
       province_state: String,
-      zip: String,
-      country: String,
     },
   }),
   description: String,
-  files: Array,
-  qr_code: new mongoose.Schema({
+  qr_code: {
     establishment_id: {
       type: String,
-      required: true,
     },
     establishment_name: String,
-  }),
+  },
+  coordinates: {
+    latitude: Number,
+    longitude: Number,
+  },
   news: [{ type: Schema.Types.ObjectId, ref: "News" }],
   posts: [{ type: Schema.Types.ObjectId, ref: "Promo" }],
   employees: [{ type: Schema.Types.ObjectId, ref: "User" }],
   daily_scanners: [{ type: Schema.Types.ObjectId, ref: "DailyScanners" }],
   status: String,
+  lock_employees: Boolean,
   updated_at: String,
   created_at: String,
+});
+
+//image
+const imageSchema = new Schema({
+  filename: String,
+  originalName: String,
+  desc: String,
+  created: { type: Date, default: Date.now() },
 });
 
 //news
@@ -214,6 +225,7 @@ establishmentSchema.pre("save", function (next) {
   var currentDate = new Date();
   this.updated_at = currentDate;
   if (!this.created_at) this.created_at = currentDate;
+  this.lock_employees = false;
   next();
 });
 
@@ -233,6 +245,7 @@ const Establishment = mongoose.model(
   "establishment"
 );
 const User = mongoose.model("User", userSchema, "user");
+const Image = mongoose.model("Image", imageSchema, "image");
 const News = mongoose.model("News", newsSchema, "news");
 const Promo = mongoose.model("Promo", promoSchema, "promo");
 const DailyScanners = mongoose.model(
@@ -248,6 +261,7 @@ const UserRewardObtained = mongoose.model(
 module.exports = {
   Establishment,
   User,
+  Image,
   News,
   Promo,
   DailyScanners,

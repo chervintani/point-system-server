@@ -4,7 +4,7 @@ let successResponse = require("../../helpers/success-response");
 let response = null;
 
 module.exports = (req, res) => {
-  Model.User.findOne({ _id: req.body.id })
+  Model.User.findOne({ _id: req.params.id })
     .populate("establishments")
     .exec((err, users) => {
       if (err) return res.send(err);

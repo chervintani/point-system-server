@@ -5,8 +5,9 @@ let Model = require("../models/user");
 let errorResponse = require("../helpers/error-response");
 let successResponse = require("../helpers/success-response");
 var response = null;
-let feedsActivity = require("../helpers/feeds-activity");
 
+let feedsActivity = require("../helpers/feeds-activity");
+let smsVerification = require("../modules/user/sms-verification");
 let register = require("../modules/user/user.register");
 let login = require("../modules/user/user.login");
 let userQrCode = require("../modules/user/user.qr-code");
@@ -18,7 +19,31 @@ let retrieveStores = require("../modules/user/retrieve-stores");
 let retrieveSubStores = require("../modules/user/retrieved-sub-stores");
 let subscribeStore = require("../modules/user/user.subscribe-store");
 let addPromo = require("../modules/user/user.add-promo");
-let addNews = require("../modules/user/user.add-news")
+let addNews = require("../modules/user/user.add-news");
+
+//employee
+let scanEstablishment = require("../modules/user/employee.scan-establishment");
+
+router.post("/sms-send-verification", (req, res) => {
+  //phone_number
+  smsVerification.makeRequest(req, res);
+});
+
+router.post("/sms-check-verification", (req, res) => {
+  //request_id & code
+  smsVerification.checkRequest(req, res);
+});
+
+router.post("/sms-resend-verification", (req, res) => {
+  //phone_number & request_id
+  smsVerification.cancelRequest(req, res);
+  smsVerification.makeRequest(req, res);
+});
+
+// router.post("/sms-verification", (req, res) => {
+//   smsVerification(req, res);
+// });
+
 router.post("/user/login", (req, res) => {
   login(req.body, res);
 });
@@ -51,49 +76,26 @@ router.get("/user/subscribe-store/:user_id/:store_id", (req, res) => {
   subscribeStore(req, res);
 });
 
-router.get("/user/retrieve/subscribed-store/:store_id/:user_id", (req, res) => {  //MURAG MADALA RANIS FRONT-END
-  Model.User.findById(req.params.user_id, (err, data) => {
-    if (err) throw err;
-
-    Model.Establishment.findById(
-      req.params.store_id,
-      {
-        _id: 1,
-        news: 1,
-        posts: 1,
-        name: 1,
-        logo: 1,
-      },
-      (err, store) => {
-        if (err) throw err;
-
-        console.log(data.subscribed_stores[0].establishment_id);
-
-        let subscribed_stores = data.subscribed_stores;
-        let rewards = store.posts;
-        // console.log(subscribed_stores);
-        var item = subscribed_stores.find(
-          (item) => item.establishment_id == store._id
-        );
-        console.log(item);
-        console.log(rewards);
-
-        let response = new Object({
-          news: store.news,
-          posts: store.posts,
-          name: store.name,
-          logo: store.logo,
-          rewards: data.rewards,
-        });
-        res.send(response);
-      }
-    );
-  });
-});
 // MAKUHA RANI SA FRONT END
 // router.get("/user/retrieve/store/:id", (req, res) => {
 //   res.send("this is a retrieve store api");
 // });
+
+router.get("/user/retrieve/store/:id", (req, res) => {
+  Model.Establishment.findById(req.params.id, { posts: 1, news: 1 })
+    .populate("posts")
+    .populate("news")
+    .exec((err, results) => {
+      try {
+        if (err) throw err;
+        response = successResponse(200,results,`Retrieved ${req.params.id} promos and news`);
+        res.status(response.status).send(response);
+      } catch (error) {
+        response = errorResponse(500, error, "Service unavailable!");
+        res.status(response.status).send(response);
+      }
+    });
+});
 
 router.get("/user/retrieve/store/my-reward", (req, res) => {
   res.send("this is a retrieve one store(subscribed/not) api");
@@ -111,7 +113,7 @@ router.post("/user/update/establishment", (req, res) => {
   updateEstablishment(req, res);
 });
 
-router.post("/user/retrieve/establishments", (req, res) => {
+router.get("/user/retrieve/establishments/:id", (req, res) => {
   retrieveEstablishments(req, res);
 });
 
@@ -150,6 +152,10 @@ router.get("/establishment/retrieve/account", (req, res) => {
 });
 
 //this route is for employee
+
+router.post("/employee/scan-establishment", (req, res) => {
+  scanEstablishment(req, res);
+});
 
 router.get("/employee/retrieve/user-details", (req, res) => {
   res.send("this is a retrieve customer details account api");
