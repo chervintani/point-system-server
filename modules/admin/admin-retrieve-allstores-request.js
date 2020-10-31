@@ -5,8 +5,9 @@ let response = null;
 
 module.exports = (req, res) => {
   Model.Establishment.find(
-    {status: "Accepted"},
-    { _id: 1, offers: 1, promos: 1, name: 1, logo: 1, details: 1, description: 1, website: 1 },
+    {},
+    {},
+    {sort: {_id:-1}},
     (err, stores) => {
       if (err) {
         response = errorResponse(500, err, "Service unavailable!");

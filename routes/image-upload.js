@@ -9,14 +9,14 @@ const fs = require("fs");
 const path = require("path");
 const del = require("del");
 
-let UPLOAD_PATH = "uploads";
+let UPLOAD_PATH = "./uploads/";
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, UPLOAD_PATH);
   },
   filename: function (req, file, cb) {
-    cb(null, file.fieldname + "-" + Date.now());
+    cb(null, Date.now() + file.originalname);
   },
 });
 let upload = multer({ storage: storage });
@@ -33,7 +33,7 @@ router.post("/images", upload.single("image"), (req, res, next) => {
       if (err) {
         throw err;
       }
-      console.log({newImage});
+      console.log({ newImage });
       response = successResponse(200, { newImage }, "Image saved successfully");
       res.status(response.status).send(response);
     } catch (error) {
@@ -68,30 +68,19 @@ router.get("/images", (req, res, next) => {
     });
 });
 
-// Get one image by its ID
 router.get("/images/:id", (req, res, next) => {
   let imgId = req.params.id;
 
   Model.Image.findById(imgId, (err, image) => {
-    try {
-      if (err) {
-        throw err;
-      }
-    } catch (error) {
-      response = errorResponse(400, error, "Bad Request!");
+    if (err) {
+      response = errorResponse(400, err, "Bad Request!");
       res.status(response.status).send(response);
     }
     // stream the image back by loading the file
-    if (!image) {
-      response = errorResponse(404, { success: false }, "Not found!");
-      return res.status(response.status).send(response);
-    } else {
-      fs.createReadStream(path.join(UPLOAD_PATH, image.filename)).pipe(res);
-      res.setHeader("Content-Type", "image/jpeg");
-    }
+    res.setHeader("Content-Type", "image/jpeg");
+    fs.createReadStream(path.join(UPLOAD_PATH, image.filename)).pipe(res);
   });
 });
-
 // Delete one image by its ID
 router.delete("/images/:id", (req, res, next) => {
   let imgId = req.params.id;

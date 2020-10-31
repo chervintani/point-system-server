@@ -10,7 +10,7 @@ const nexmo = new Nexmo({
 });
 
 makeRequest = (req, res) => {
-  try {
+  // try {
     nexmo.verify.request(
       {
         number: req.body.phone_number,
@@ -18,15 +18,15 @@ makeRequest = (req, res) => {
         code_length: "6",
       },
       (err, result) => {
-        if (err) throw err;
+        if (err) return res.send(err);
         response = successResponse(200, result, "Verification code sent.");
         res.status(response.status).send(response);
       }
     );
-  } catch (error) {
-    response = errorResponse(500, error, "Service unavailable!");
-    res.status(response.status).send(response);
-  }
+  // } catch (error) {
+  //   response = errorResponse(500, error, "Service unavailable!");
+  //   res.status(response.status).send(response);
+  // }
 };
 
 cancelRequest = (req, res) => {

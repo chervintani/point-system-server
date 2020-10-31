@@ -46,7 +46,7 @@ Model.Establishment.findOne(
             }
           });
 
-          establishment.posts.push(promo);
+          establishment.promos.push(promo);
           establishment.save((err, result) => {
             if (err) {
               response = errorResponse(500, err, "Unable to add promo!");

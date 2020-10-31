@@ -6,6 +6,7 @@ const adminApi = require("./routes/admin-route");
 const userApi = require("./routes/user-route");
 const imageApi = require("./routes/image-upload");
 const app = express();
+const path = require("path")
 const mongoose = require("mongoose");
 const Nexmo = require("nexmo");
 const config = require("./config.json");
@@ -23,6 +24,8 @@ app.use(cors());
 app.use("/api", adminApi);
 app.use("/api", userApi);
 app.use("/api", imageApi);
+app.use('/uploads', express.static(path.join(__dirname + '/uploads')));
+
 
 app.get("/", (req, res) => {
   // console.log(config.nexmo_config.apiKey);

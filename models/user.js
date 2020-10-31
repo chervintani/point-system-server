@@ -17,23 +17,24 @@ const userSchema = new Schema({
       establishment: { type: Schema.Types.ObjectId, ref: "Establishment" },
       points: Number,
       date_subscribed: String,
+      rewards: [{ type: Schema.Types.ObjectId, ref: "Promo" }],
     },
   ],
-  rewards: [
-    new mongoose.Schema({
-      user_id: {
-        type: Schema.Types.ObjectId,
-        required: true,
-      },
-      establishment_id: {
-        type: Schema.Types.ObjectId,
-        required: true,
-      },
-      promo_name: String,
-      points: Number,
-      image: String,
-    }),
-  ],
+  // rewards: [
+  //   new mongoose.Schema({
+  //     user_id: {
+  //       type: Schema.Types.ObjectId,
+  //       required: true,
+  //     },
+  //     establishment_id: {
+  //       type: Schema.Types.ObjectId,
+  //       required: true,
+  //     },
+  //     promo_name: String,
+  //     points: Number,
+  //     image: String,
+  //   }),
+  // ],
   total_points: Number,
   feeds_activity: [
     {
@@ -43,6 +44,7 @@ const userSchema = new Schema({
       date: String,
     },
   ],
+  status: String,
   updated_at: String,
   created_at: String,
 });
@@ -76,10 +78,20 @@ const establishmentSchema = new Schema({
     latitude: Number,
     longitude: Number,
   },
-  news: [{ type: Schema.Types.ObjectId, ref: "News" }],
-  posts: [{ type: Schema.Types.ObjectId, ref: "Promo" }],
+  offers: [{ type: Schema.Types.ObjectId, ref: "Offer" }],
+  promos: [{ type: Schema.Types.ObjectId, ref: "Promo" }],
   employees: [{ type: Schema.Types.ObjectId, ref: "User" }],
-  daily_scanners: [{ type: Schema.Types.ObjectId, ref: "DailyScanners" }],
+  daily_scanners: [
+    new mongoose.Schema({
+      date: String,
+      employee: [{
+        user_id: String,
+        time_in: String,
+        time_out: String,
+      }],
+    }),
+  ],
+  subscribers: [{ type: Schema.Types.ObjectId, ref: "User" }],
   status: String,
   lock_employees: Boolean,
   updated_at: String,
@@ -94,13 +106,13 @@ const imageSchema = new Schema({
   created: { type: Date, default: Date.now() },
 });
 
-//news
-const newsSchema = new Schema({
+//offer
+const offerSchema = new Schema({
   establishment_id: {
     type: String,
     required: true,
   },
-  title: {
+  name: {
     type: String,
     required: true,
   },
@@ -108,9 +120,20 @@ const newsSchema = new Schema({
     type: String,
     required: true,
   },
+  points: {
+    type: Number,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required:true
+  },
   image: {
     type: String,
     required: true,
+  },
+  status: {
+    type: String
   },
   date_created: String,
 });
@@ -133,6 +156,26 @@ const promoSchema = new Schema({
     type: String,
     required: true,
   },
+  image: {
+    type: String,
+    required: true,
+  },
+  status: {
+    type: String
+  },
+  date_created: String,
+});
+
+//post
+const postSchema = new Schema({
+  collection_id: {
+    type: String,
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
   description: {
     type: String,
     required: true,
@@ -146,27 +189,33 @@ const promoSchema = new Schema({
 
 //daily scanners
 const daily_scannersSchema = new Schema({
-  establishment_id: {
-    type: Schema.Types.ObjectId,
-    required: true,
+  date: String,
+  employee: {
+    user_id: String,
+    time_in: String,
+    time_out: String,
   },
-  date: {
-    type: String,
-    required: true,
-  },
-  time_in: {
-    type: String,
-    required: true,
-  },
-  time_out: {
-    type: String,
-    required: true,
-  },
-  user: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: "user",
-  },
+  // establishment_id: {
+  //   type: Schema.Types.ObjectId,
+  //   required: true,
+  // },
+  // date: {
+  //   type: String,
+  //   required: true,
+  // },
+  // time_in: {
+  //   type: String,
+  //   required: true,
+  // },
+  // time_out: {
+  //   type: String,
+  //   required: true,
+  // },
+  // user: {
+  //   type: Schema.Types.ObjectId,
+  //   required: true,
+  //   ref: "user",
+  // },
 });
 
 //user_reward_obtained
@@ -216,11 +265,13 @@ userSchema.pre("save", function (next) {
   if (!this.isModified("password")) {
     return next();
   }
+  this.status = "Activated";
   this.password = bcrypt.hashSync(this.password, 10);
   next();
 });
 
 establishmentSchema.pre("save", function (next) {
+  if(!this.subscribers) this.subscribers = [];
   if (!this.status) this.status = "Waiting";
   var currentDate = new Date();
   this.updated_at = currentDate;
@@ -230,11 +281,18 @@ establishmentSchema.pre("save", function (next) {
 });
 
 promoSchema.pre("save", function (next) {
+  if (!this.status) this.status = "Waiting";
   var currentDate = new Date();
   if (!this.date_created) this.date_created = currentDate;
   next();
 });
-newsSchema.pre("save", function (next) {
+postSchema.pre("save", function (next) {
+  var currentDate = new Date();
+  if (!this.date_created) this.date_created = currentDate;
+  next();
+});
+offerSchema.pre("save", function (next) {
+  if (!this.status) this.status = "Waiting";
   var currentDate = new Date();
   if (!this.date_created) this.date_created = currentDate;
   next();
@@ -246,7 +304,7 @@ const Establishment = mongoose.model(
 );
 const User = mongoose.model("User", userSchema, "user");
 const Image = mongoose.model("Image", imageSchema, "image");
-const News = mongoose.model("News", newsSchema, "news");
+const Offer = mongoose.model("Offer", offerSchema, "offer");
 const Promo = mongoose.model("Promo", promoSchema, "promo");
 const DailyScanners = mongoose.model(
   "DailyScanners",
@@ -258,12 +316,14 @@ const UserRewardObtained = mongoose.model(
   user_reward_obtainedSchema,
   "user_reward_obtained"
 );
+const Post = mongoose.model("Post", postSchema,"post");
 module.exports = {
   Establishment,
   User,
   Image,
-  News,
+  Offer,
   Promo,
   DailyScanners,
   UserRewardObtained,
+  Post
 };

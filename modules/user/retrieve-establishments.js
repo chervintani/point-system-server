@@ -5,7 +5,7 @@ let response = null;
 
 module.exports = (req, res) => {
   Model.User.findOne({ _id: req.params.id })
-    .populate("establishments")
+    .populate({ path: "establishments", match: { status: "Accepted" } })
     .exec((err, users) => {
       if (err) return res.send(err);
       if (users) {

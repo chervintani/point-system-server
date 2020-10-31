@@ -10,16 +10,19 @@ module.exports = (req, res) => {
       response = errorResponse(500, err, "Cannot find user!");
       return res.status(response.status).send(response);
     }
-    Model.Establishment.findById(req.params.store_id, (err, establishment) => {
+    Model.Establishment.findById(req.params.store_id, async (err, establishment) => {
       if (err) {
         response = errorResponse(500, err, "Unable find establishment!");
         return res.status(response.status).send(response);
       }
+      establishment.subscribers.push(user)
+      await establishment.save();
       const establishmentModel = new Model.Establishment(establishment);
+      establishmentModel._id = req.params.store_id
       let activity = feedsActivity(
         "Subscribed a store",
         `${user.firstname} subscribed ${establishment.name}.`,
-        req.body.location,
+        req.params.location,
         new Date()
       );
       user.feeds_activity.push(activity);

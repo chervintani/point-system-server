@@ -9,6 +9,23 @@ let errorResponse = require("../helpers/error-response");
 let successResponse = require("../helpers/success-response");
 let response = null;
 
+let retrieveStoresAndRequest = require("../modules/admin/admin-retrieve-allstores-request");
+let retrieveStore = require("../modules/admin/admin-retrieve-store");
+let updateStoreStatus = require("../modules/admin/admin-update-store-status");
+let retrieveAllUsers = require("../modules/admin/admin-retrieve-all-user");
+let retrieveUserData = require("../modules/admin/admin-retrieve-user-data");
+let retrieveUserStoreSubscribe = require("../modules/admin/admin-retrieve-user-store-subscribed");
+let retrieveUserOwnedStore = require("../modules/admin/admin-retrieve-user-user-account-user-owned-store");
+let totalEstablishmentSubscribedByUser = require("../modules/admin/admin-user-total-store-subscribed");
+let totalEstablishment = require("../modules/admin/admin-total-establishments");
+let totalUsers = require("../modules/admin/admin-total-user");
+let userOverAllTotalPoints = require("../modules/admin/admin-user-overalltotal-points");
+let retrieveEstablishmentPromos= require("../modules/admin/admin-retrieve-establishment-promos");
+let retrieveEstablishmentOffers = require("../modules/admin/admin-retrieve-establishment-offers");
+let updateEstablishmentPromoStatus = require("../modules/admin/admin-update-establishmentPromo-status"); 
+let updateEstablishmentOfferStatus = require("../modules/admin/admin-update-establishmentOffers-status");
+const { Establishment } = require("../models/user");
+
 function verifyToken(req, res, next) {
   if (!req.headers.authorization) {
     return res.status(401).send("Unauthorized request");
@@ -39,46 +56,84 @@ router.post("/login/admin", (req, res) => {
 });
 
 router.get("/admin/retrieve/all-users", async (req, res) => {
-  try {
-    let query = {firstname:true , lastname:true, phone_number:true, total_points: true, created_at:true}
-    let users = await Model.User.find({},query);
-    res.send(users)
-  } catch (error) {
-    res.status(500).json(error)
-  }
+  retrieveAllUsers(req, res);
 });
 
 router.get("/admin/retrieve/user/:id", async (req, res) => {
-  try {
-    let user = await Model.User.findOne({_id:req.params.id});
-    res.status(200).send(user)
-  } catch (error) {
-    res.status(500).json(error)
+  retrieveUserData(req, res);
+});
+
+router.get("/admin/retrieve/user/user-account/post:id", async (req, res) => {
+  retrieveUserData(req, res);
+});
+
+router.get("/admin/retrieve/stores", async (req, res) => {
+  retrieveStoresAndRequest(req, res);
+});
+
+router.get("/admin/retrieve/store/:id", async (req, res) => {
+  retrieveStore(req, res);
+});
+
+router.get("/admin/retrieve/total-establishment", async (req, res) => {
+  totalEstablishment(req, res);
+});
+
+router.get(
+  "/admin/retrieve/user/user-total-store-subscribed/:id",
+  async (req, res) => {
+    totalEstablishmentSubscribedByUser(req, res);
   }
+);
+//totalpoints earn
+router.get(
+  "/admin/retrieve/user/user-overalltotal-points/:id",
+  async (req, res) => {
+    userOverAllTotalPoints(req, res);
+  }
+);
+
+router.get("/admin/retrieve/total-users", async (req, res) => {
+  totalUsers(req, res);
 });
-router.get("/admin/retrieve/user/user-account/user-store-subscribed/:id", async (req, res) => {
-  const result = await Model.User.find({_id:req.params.id},{subscribed_stores:true})
-  // res.status(200).send(user)
-  .populate({
-    path: "subscribed_stores.establishment",
-    model: "Establishment",
-    select: ["name"]
-  })
-  .exec();
-  res.send(result);
+
+router.put("/admin/update/store-status", async (req, res) => {
+  console.log(req.body);
+  updateStoreStatus(req, res);
 });
 
-
-// router.post("/user/find-qr", (req, res) => {
-//   console.log(req.body);
-
-//   Model.User.findOne({username: 'String'},  (err, user)=> {
-
-//     var photos = user.rewards.filter( (photo)=> {
-//       return photo.points === 3;
-//     }).pop();
+router.put("/admin/update/establishmentPromo-status", async (req, res) => {
+  updateEstablishmentPromoStatus(req, res);
   
-//     console.log(photos); 
-//   });
-// });
+});
+
+router.put("/admin/update/establishmentOffer-status", async (req, res) => {
+  updateEstablishmentOfferStatus(req, res);
+});
+
+
+
+router.get(
+  "/admin/retrieve/user/user-account/user-store-subscribed/:id",
+  async (req, res) => {
+    retrieveUserStoreSubscribe(req, res);
+  }
+);
+
+router.get(
+  "/admin/retrieve/user/user-account/user-owned-store/:id",
+  async (req, res) => {
+    retrieveUserOwnedStore(req, res);
+  }
+);
+
+router.get("/admin/retrieve/establishment-promos/:id", async (req, res) => {
+  retrieveEstablishmentPromos(req,res);
+});
+
+
+router.get("/admin/retrieve/establishment-offers/:id", async (req, res) => {
+  retrieveEstablishmentOffers(req,res);
+});
+
 module.exports = router;
