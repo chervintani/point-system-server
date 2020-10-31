@@ -15,6 +15,7 @@ const config = require("./config.json");
 //   origin: 'http://localhost:8080',
 //   optionsSuccessStatus: 200 // 204
 // }
+
 const nexmo = new Nexmo({
   apiKey: config.nexmo_config.apiKey,
   apiSecret: config.nexmo_config.apiSecret,
