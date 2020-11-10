@@ -17,24 +17,9 @@ const userSchema = new Schema({
       establishment: { type: Schema.Types.ObjectId, ref: "Establishment" },
       points: Number,
       date_subscribed: String,
-      rewards: [{ type: Schema.Types.ObjectId, ref: "Promo" }],
+      rewards: Array,
     },
   ],
-  // rewards: [
-  //   new mongoose.Schema({
-  //     user_id: {
-  //       type: Schema.Types.ObjectId,
-  //       required: true,
-  //     },
-  //     establishment_id: {
-  //       type: Schema.Types.ObjectId,
-  //       required: true,
-  //     },
-  //     promo_name: String,
-  //     points: Number,
-  //     image: String,
-  //   }),
-  // ],
   total_points: Number,
   feeds_activity: [
     {
@@ -44,6 +29,7 @@ const userSchema = new Schema({
       date: String,
     },
   ],
+  profile_picture: String,
   status: String,
   updated_at: String,
   created_at: String,
@@ -84,16 +70,22 @@ const establishmentSchema = new Schema({
   daily_scanners: [
     new mongoose.Schema({
       date: String,
+      statistics_date: Number,
       employee: [{
         user_id: String,
         time_in: String,
         time_out: String,
+        processed: {
+          price: Number,
+          points: Number
+        }
       }],
     }),
   ],
   subscribers: [{ type: Schema.Types.ObjectId, ref: "User" }],
   status: String,
   lock_employees: Boolean,
+  support_delivery: Boolean,
   updated_at: String,
   created_at: String,
 });
@@ -168,7 +160,11 @@ const promoSchema = new Schema({
 
 //post
 const postSchema = new Schema({
-  collection_id: {
+  establishment_id: {
+    type: String,
+    required: true,
+  },
+  type: {
     type: String,
     required: true,
   },
@@ -184,6 +180,7 @@ const postSchema = new Schema({
     type: String,
     required: true,
   },
+  likes: Array,
   date_created: String,
 });
 
@@ -195,27 +192,6 @@ const daily_scannersSchema = new Schema({
     time_in: String,
     time_out: String,
   },
-  // establishment_id: {
-  //   type: Schema.Types.ObjectId,
-  //   required: true,
-  // },
-  // date: {
-  //   type: String,
-  //   required: true,
-  // },
-  // time_in: {
-  //   type: String,
-  //   required: true,
-  // },
-  // time_out: {
-  //   type: String,
-  //   required: true,
-  // },
-  // user: {
-  //   type: Schema.Types.ObjectId,
-  //   required: true,
-  //   ref: "user",
-  // },
 });
 
 //user_reward_obtained
@@ -242,6 +218,32 @@ const user_reward_obtainedSchema = new Schema({
   },
 });
 
+//delivery schema
+const deliverySchema = new Schema({
+  establishment_id: String,
+  orders: [{ type: Schema.Types.ObjectId, ref: "Offer" }],
+  customer_name: {
+    type: String,
+    required: true,
+  },
+  location: {
+    type: String,
+    required: true,
+  },
+  phone_number: {
+    type: String,
+    required: true,
+  },
+  date_created: String
+});
+
+
+const notificationSchema = new Schema({
+  user_id: String,
+  image: String,
+  description: String,
+  date_created: String
+})
 userSchema.pre("save", function (next) {
   this.firstname = this.firstname.replace(
     /\b[a-z]|['_][a-z]|\B[A-Z]/g,
@@ -261,7 +263,7 @@ userSchema.pre("save", function (next) {
   var currentDate = new Date();
   this.updated_at = currentDate;
   if (!this.created_at) this.created_at = currentDate;
-
+  if (!this.profile_picture) this.profile_picture = "";
   if (!this.isModified("password")) {
     return next();
   }
@@ -276,7 +278,7 @@ establishmentSchema.pre("save", function (next) {
   var currentDate = new Date();
   this.updated_at = currentDate;
   if (!this.created_at) this.created_at = currentDate;
-  this.lock_employees = false;
+  if (!this.lock_employees) this.lock_employees = false;
   next();
 });
 
@@ -293,6 +295,16 @@ postSchema.pre("save", function (next) {
 });
 offerSchema.pre("save", function (next) {
   if (!this.status) this.status = "Waiting";
+  var currentDate = new Date();
+  if (!this.date_created) this.date_created = currentDate;
+  next();
+});
+deliverySchema.pre("save", function (next) {
+  var currentDate = new Date();
+  if (!this.date_created) this.date_created = currentDate;
+  next();
+});
+notificationSchema.pre("save", function (next) {
   var currentDate = new Date();
   if (!this.date_created) this.date_created = currentDate;
   next();
@@ -317,6 +329,8 @@ const UserRewardObtained = mongoose.model(
   "user_reward_obtained"
 );
 const Post = mongoose.model("Post", postSchema,"post");
+const Delivery = mongoose.model("Delivery", deliverySchema,"delivery");
+const Notification = mongoose.model("Notification", notificationSchema,"notification");
 module.exports = {
   Establishment,
   User,
@@ -325,5 +339,7 @@ module.exports = {
   Promo,
   DailyScanners,
   UserRewardObtained,
-  Post
+  Post,
+  Delivery,
+  Notification
 };

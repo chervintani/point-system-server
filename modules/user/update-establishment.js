@@ -17,7 +17,8 @@ module.exports = (req, res) => {
         establishment.details = req.body.details;
         establishment.description = req.body.description;
         establishment.qr_code = req.body.qr_code;
-        establishment.status = req.body.status;
+        // establishment.status = req.body.status;
+        establishment.support_delivery = req.body.support_delivery;
 
         establishment.save((err, result) => {
           if (err) {

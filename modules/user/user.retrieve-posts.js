@@ -6,6 +6,7 @@ let response = null;
 module.exports = async (req, res) => {
   try {
     let posts = await Model.Post.find({}).sort({ date_created: "desc" }).exec();
+    console.log(posts);
     response = successResponse(200, posts, "Retrieve posts successfully");
     res.status(response.status).send(response);
   } catch (error) {

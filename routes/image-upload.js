@@ -24,23 +24,28 @@ let upload = multer({ storage: storage });
 // Upload a new image with description
 router.post("/images", upload.single("image"), (req, res, next) => {
   // Create a new image model and fill the properties
-  let newImage = new Model.Image();
-  newImage.filename = req.file.filename;
-  newImage.originalName = req.file.originalname;
-  newImage.desc = req.body.desc;
-  newImage.save((err) => {
-    try {
-      if (err) {
-        throw err;
+  if(req.file){
+    let newImage = new Model.Image();
+    newImage.filename = req.file.filename;
+    newImage.originalName = req.file.originalname;
+    newImage.desc = req.body.desc;
+    newImage.save((err) => {
+      try {
+        if (err) {
+          throw err;
+        }
+        console.log({ newImage });
+        response = successResponse(200, { newImage }, "Image saved successfully");
+        res.status(response.status).send(response);
+      } catch (error) {
+        response = errorResponse(400, error, "Bad Request!");
+        res.status(response.status).send(response);
       }
-      console.log({ newImage });
-      response = successResponse(200, { newImage }, "Image saved successfully");
-      res.status(response.status).send(response);
-    } catch (error) {
-      response = errorResponse(400, error, "Bad Request!");
-      res.status(response.status).send(response);
-    }
-  });
+    });
+  }else{
+    response = successResponse(200, { success: true}, "Image saved successfully");
+    res.status(response.status).send(response);
+  }
 });
 
 // Get all uploaded images

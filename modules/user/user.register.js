@@ -56,7 +56,7 @@ module.exports = (req, res) => {
 
                 response = successResponse(
                   200,
-                  { token },
+                  { token: token, data},
                   "Registered Successfully"
                 );
                 res.status(response.status).send(response);

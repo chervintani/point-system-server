@@ -5,7 +5,7 @@ let response = null;
 
 module.exports = async (req, res) => {
     try {
-        let user = await Model.User.findById(req.params.id);
+        let user = await Model.User.findById(req.params.id, {feeds_activity:0});
         console.log(user);
         response = successResponse(200, user, "Retrieved successfully");
         res.status(response.status).send(response);

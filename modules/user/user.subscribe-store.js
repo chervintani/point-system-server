@@ -29,7 +29,8 @@ module.exports = (req, res) => {
       user.subscribed_stores.push({
         establishment: establishmentModel,
         points: 0,
-        date_subscribed: new Date()
+        date_subscribed: new Date(),
+        rewards: []
       });
 
       user.save((err, data) => {
@@ -37,7 +38,7 @@ module.exports = (req, res) => {
           response = errorResponse(500, err, "Unable to subscribe store!");
           return res.status(response.status).send(response);
         }
-        response = successResponse(200, data, "Store subscribed successfully!");
+        response = successResponse(200, establishment, "Store subscribed successfully!");
         res.status(response.status).send(response);
       });
     }).catch((error) => {

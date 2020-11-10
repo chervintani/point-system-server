@@ -24,6 +24,14 @@ let retrieveEstablishmentPromos= require("../modules/admin/admin-retrieve-establ
 let retrieveEstablishmentOffers = require("../modules/admin/admin-retrieve-establishment-offers");
 let updateEstablishmentPromoStatus = require("../modules/admin/admin-update-establishmentPromo-status"); 
 let updateEstablishmentOfferStatus = require("../modules/admin/admin-update-establishmentOffers-status");
+let retrieveEstablishmentEmployees = require("../modules/user/establishment.retrieve-employees");
+let retrievePost = require("../modules/admin/admin-retrieve-post");
+let retrieveDailyScanners = require("../modules/admin/admin-establishment-daily-scanner");
+let retrieveEstablishmentStatistics = require("../modules/user/establishment.retrieve-statistics");
+let retrieveEstablishmentTopEarners = require("../modules/user/establishment.retrieve-top-earners");
+let updateUserStatus = require("../modules/admin/admin-update-user-status");
+let retrieveAllPendingPromos = require("../modules/admin/admin-retrieve-allestablishment-promo");
+let retrieveAllPendingOffers = require("../modules/admin/admin-retrieve-allestablishment-offers")
 const { Establishment } = require("../models/user");
 
 function verifyToken(req, res, next) {
@@ -42,17 +50,17 @@ function verifyToken(req, res, next) {
   next();
 }
 
-router.get("/pages/dashboard", verifyToken, (req, res) => {
-  let list = [];
-  res.json(list);
-});
+// router.get("/pages/dashboard", verifyToken, (req, res) => {
+//   let list = [];
+//   res.json(list);
+// });
 
 router.get("/", (req, res) => {
   res.send("Hello! This is Pointsystem server");
 });
 
 router.post("/login/admin", (req, res) => {
-  login(req.body, res);
+  login(req, res);
 });
 
 router.get("/admin/retrieve/all-users", async (req, res) => {
@@ -85,7 +93,7 @@ router.get(
     totalEstablishmentSubscribedByUser(req, res);
   }
 );
-//totalpoints earn
+
 router.get(
   "/admin/retrieve/user/user-overalltotal-points/:id",
   async (req, res) => {
@@ -97,21 +105,23 @@ router.get("/admin/retrieve/total-users", async (req, res) => {
   totalUsers(req, res);
 });
 
-router.put("/admin/update/store-status", async (req, res) => {
+router.put("/admin/update/store-status", (req, res) => {
   console.log(req.body);
   updateStoreStatus(req, res);
 });
 
-router.put("/admin/update/establishmentPromo-status", async (req, res) => {
+router.put("/admin/update/establishmentPromo-status", (req, res) => {
   updateEstablishmentPromoStatus(req, res);
   
 });
 
-router.put("/admin/update/establishmentOffer-status", async (req, res) => {
+router.put("/admin/update/establishmentOffer-status", (req, res) => {
   updateEstablishmentOfferStatus(req, res);
 });
 
-
+router.put("/admin/update/user-status", (req, res) => {
+  updateUserStatus(req, res);
+});
 
 router.get(
   "/admin/retrieve/user/user-account/user-store-subscribed/:id",
@@ -119,6 +129,18 @@ router.get(
     retrieveUserStoreSubscribe(req, res);
   }
 );
+
+router.get(
+  "/admin/retrieve/establishment/establishment-employees/:id",
+  async (req, res) => {
+    retrieveEstablishmentEmployees(req,res);
+}
+);
+
+router.get("/admin/retrieveEstablishment/daily-scanners/:id/:date", (req, res) => {
+  retrieveDailyScanners(req, res);
+});
+
 
 router.get(
   "/admin/retrieve/user/user-account/user-owned-store/:id",
@@ -134,6 +156,26 @@ router.get("/admin/retrieve/establishment-promos/:id", async (req, res) => {
 
 router.get("/admin/retrieve/establishment-offers/:id", async (req, res) => {
   retrieveEstablishmentOffers(req,res);
+});
+
+router.get("/admin/retrieve/post", async (req, res) => {
+  retrievePost(req,res);
+});
+
+router.get("/admin/retrieve/establishment/statistics/:id", async (req, res) => {
+  retrieveEstablishmentStatistics(req,res);
+});
+
+router.get("/admin/retrieve/establishment/top-earner/:id", async (req, res) => {
+  retrieveEstablishmentTopEarners(req,res);
+});
+
+router.get("/admin/retrieve/allestablishment-promo-waiting", async (req, res) => {
+  retrieveAllPendingPromos(req,res);
+});
+
+router.get("/admin/retrieve/allestablishment-offer-waiting", async (req, res) => {
+  retrieveAllPendingOffers(req,res);
 });
 
 module.exports = router;

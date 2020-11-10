@@ -56,11 +56,16 @@ module.exports = async (req, res) => {
 
                       let data = {
                         date: today,
+                        statistics_date: Date.now(),
                         employee: [
                           {
                             user_id: req.body.id,
                             time_in: new Date().toString(),
                             time_out: "",
+                            processed: {
+                              price: 0,
+                              points: 0
+                            }
                           },
                         ],
                       };
@@ -103,6 +108,10 @@ module.exports = async (req, res) => {
                           user_id: req.body.id,
                           time_in: new Date().toString(),
                           time_out: "",
+                          processed: {
+                            price: 0,
+                            points: 0
+                          }
                         };
 
                         establishment.daily_scanners[index].employee.push(
@@ -139,11 +148,16 @@ module.exports = async (req, res) => {
 
             let data = {
               date: today,
+              statistics_date: Date.now(),
               employee: [
                 {
                   user_id: req.body.id,
                   time_in: new Date().toString(),
                   time_out: "",
+                  processed: {
+                    price: 0,
+                    points: 0
+                  }
                 },
               ],
             };
@@ -181,6 +195,10 @@ module.exports = async (req, res) => {
                 user_id: req.body.id,
                 time_in: new Date().toString(),
                 time_out: "",
+                processed: {
+                  price: 0,
+                  points: 0
+                }
               };
 
               establishment.daily_scanners[index].employee.push(employee);

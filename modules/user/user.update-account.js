@@ -11,7 +11,7 @@ module.exports = (req, res) => {
       user.lastname = req.body.lastname;
       user.phone_number = req.body.phone_number;
       user.username = req.body.username;
-      
+      user.profile_picture = req.body.profile_picture;
       user.save((err, data) => {
         try {
           if (err) throw err;

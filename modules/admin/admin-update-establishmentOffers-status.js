@@ -2,19 +2,23 @@ let Model = require("../../models/user");
 let errorResponse = require("../../helpers/error-response");
 let successResponse = require("../../helpers/success-response");
 let response = null;
-module.exports = async (req, res) => {
+module.exports = async(req, res) => {
 try {
     let updateEstablishmentOfferStatus = await Model.Offer.findById(req.body.id);
     console.log(updateEstablishmentOfferStatus);
     updateEstablishmentOfferStatus.status = req.body.status
     await updateEstablishmentOfferStatus.save();
 
-    if (req.params.status == "Accepted") {
+    if (req.body.status == "Accepted") {
       let offer = await Model.Offer.findById(req.body.id);
+      let establishment = await Model.Establishment.findById(req.body.establishment_id);
       let post = new Model.Post({
+        establishment_id: req.body.establishment_id,
+        type: 'offer',
         title: "New offer!",
-        description: `${offer.name} has a new offer just for you. Visit store now and view offers that you might like and you can gain points!`,
+        description: `${establishment.name} has a new offer just for you. Visit store now and view offers that you might like and you can gain points!`,
         image: offer.image,
+        likes: []
       });
       await post.save();
     }

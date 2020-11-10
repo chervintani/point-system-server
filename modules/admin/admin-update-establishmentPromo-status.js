@@ -5,17 +5,22 @@ let response = null;
 module.exports = async(req, res) => {
 try {
     let updateEstablishmentPromoStatus = await Model.Promo.findById(req.body.id);
-    console.log(updateEstablishmentPromoStatus);
     updateEstablishmentPromoStatus.status = req.body.status
     await updateEstablishmentPromoStatus.save();
-
-    if (req.params.status == "Accepted") {
+    if (req.body.status == "Accepted") {
+      console.log("this is accepted");
       let promo = await Model.Promo.findById(req.body.id);
+      let establishment = await Model.Establishment.findById(req.body.establishment_id);
+
       let post = new Model.Post({
+        establishment_id: req.body.establishment_id,
+        type: 'promo',
         title: "New promo!",
-        description: `${promo.name} just added a new promo. Go to the store and see their new promo added!`,
+        description: `${establishment.name} just added a new promo. Go to the store and see their new promo added!`,
         image: promo.image,
+        likes: []
       });
+
       await post.save();
     }
 
