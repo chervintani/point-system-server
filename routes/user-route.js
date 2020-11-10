@@ -38,6 +38,7 @@ let retrieveStatistics = require("../modules/user/establishment.retrieve-statist
 let retrieveTopEarners = require("../modules/user/establishment.retrieve-top-earners");
 let lockEmployees = require("../modules/user/establishment.lock-employees");
 let removeEmployee = require("../modules/user/establishment.remove-employee");
+let removePost = require("../modules/user/establishment.remove-post");
 //employee
 let scanEstablishment = require("../modules/user/employee.scan-establishment");
 let timeoutEstablishment = require("../modules/user/employee.time-out");
@@ -199,6 +200,13 @@ router.delete(
   "/establishment/remove/employee/:establishment_id/:employee_id",
   (req, res) => {
     removeEmployee(req, res);
+  }
+);
+
+router.post(
+  "/establishment/remove/post",
+  (req, res) => {
+    removePost(req, res);
   }
 );
 

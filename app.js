@@ -90,6 +90,6 @@ mongoose.connect(
 //   }
 // });
 
-http.listen(PORT, "0.0.0.0", function () {
+http.listen(PORT, function () {
   console.log("Server running on localhost: " + PORT);
 });
