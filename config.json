@@ -1,7 +1,7 @@
 {
     "nexmo_config": {
-        "apiKey": "e2394c05",
-        "apiSecret": "OllY4xO1O8PL2TWt"
+        "apiKey": "0294791b",
+        "apiSecret": "4a4381284cc09698"
     },
     "DB": "mongodb+srv://userchervin:09421630479@angular.8cpbp.mongodb.net/pointsys_db?retryWrites=true&w=majority"
 }
