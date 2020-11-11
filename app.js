@@ -49,7 +49,7 @@ const nexmo = new Nexmo({
   apiSecret: config.nexmo_config.apiSecret,
 });
 app.use(bodyParser.json());
-app.use(cors(corsOptions));
+app.use(cors());
 app.use("/api", adminApi);
 app.use("/api", userApi);
 app.use("/api", imageApi);
