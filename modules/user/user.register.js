@@ -44,7 +44,7 @@ module.exports = (req, res) => {
               let activity = feedsActivity(
                 "Joined Premyo",
                 `${user.firstname} joined the app!`,
-                req.body.location,
+                req.location,
                 new Date()
               );
               user.feeds_activity.push(activity);
