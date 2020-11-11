@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const PORT = process.env.PORT || 3000;
+const PORT = 80;
 const adminApi = require("./routes/admin-route");
 const userApi = require("./routes/user-route");
 const imageApi = require("./routes/image-upload");
@@ -12,7 +12,7 @@ const Nexmo = require("nexmo");
 const config = require("./config.json");
 //socket
 const http = require("http").Server(app);
-const io = require("socket.io")(http);
+const io = require("socket.io")(3030);
 const Model = require("./models/user");
 // var corsOptions = {
 //   origin: 'http://localhost:8080',
