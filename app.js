@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const PORT = 3000;
+const PORT = 5000;
 const adminApi = require("./routes/admin-route");
 const userApi = require("./routes/user-route");
 const imageApi = require("./routes/image-upload");
@@ -14,10 +14,10 @@ const config = require("./config.json");
 const http = require("http").Server(app);
 const io = require("socket.io")(3030);
 const Model = require("./models/user");
-// var corsOptions = {
-//   origin: 'http://localhost:8080',
-//   optionsSuccessStatus: 200 // 204
-// }
+var corsOptions = {
+  origin: 'https://premyo-f9a96.web.app',
+  optionsSuccessStatus: 200 // 204
+}
 io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     io.emit("users-changed", { user: socket.username, event: "left" });
@@ -49,7 +49,7 @@ const nexmo = new Nexmo({
   apiSecret: config.nexmo_config.apiSecret,
 });
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use("/api", adminApi);
 app.use("/api", userApi);
 app.use("/api", imageApi);
