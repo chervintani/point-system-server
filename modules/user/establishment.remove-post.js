@@ -10,10 +10,10 @@ module.exports = async (req, res) => {
         await Model.Promo.findByIdAndDelete(req.body.post_id);
         break;
       case "offer":
-        await Model.Offer.findByIdAndDelete(req.params.post_id);
+        await Model.Offer.findByIdAndDelete(req.body.post_id);
         break;
     }
-    await Model.Post.deleteOne({ image: req.body.image });
+    await Model.Post.deleteMany({ image: req.body.image });
     response = successResponse(200, { success: true }, "Deleted successfully");
     res.status(response.status).send(response);
   } catch (error) {

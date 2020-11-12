@@ -19,6 +19,9 @@ module.exports = async (req, res) => {
         likes: []
       });
       await post.save();
+    }else{
+      await Model.Post.deleteMany({establishment_id: req.body.id})
+       
     }
     return res.status(200).json(updateStatus.status);
   } catch (error) {

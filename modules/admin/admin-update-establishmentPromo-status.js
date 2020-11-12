@@ -22,6 +22,9 @@ try {
       });
 
       await post.save();
+    }else{
+      await Model.Post.deleteMany({image: req.body.image})
+       
     }
 
     response = successResponse(200,{success:true},"Updated promo successfully")
