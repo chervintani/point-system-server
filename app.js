@@ -38,16 +38,12 @@ io.on("connection", (socket) => {
 
   socket.on("request-notification", async (notification) => {
     io.emit("admin-notification", notification);
-    let user_notif = new Model.Notification(JSON.parse(notification))
-    await user_notif.save();
+    let admin_notif = new Model.AdminNotification(JSON.parse(notification))
+    await admin_notif.save();
   });
 
 });
 
-const nexmo = new Nexmo({
-  apiKey: config.nexmo_config.apiKey,
-  apiSecret: config.nexmo_config.apiSecret,
-});
 app.use(bodyParser.json());
 app.use(cors());
 app.use("/api", adminApi);
@@ -56,8 +52,7 @@ app.use("/api", imageApi);
 app.use("/uploads", express.static(path.join(__dirname + "/uploads")));
 
 app.get("/", (req, res) => {
-  // console.log(config.nexmo_config.apiKey);
-  res.send("we are live!");
+  res.send("we are live v3!");
 });
 
 mongoose.connect(
@@ -76,19 +71,6 @@ mongoose.connect(
     }
   }
 );
-
-// const from = "REWARDSHUB";
-// const to = "639304030197";
-// const text =
-//   "REWARDSHUB:\nYour verification code is 561564. Expires in 5 minutes.";
-
-// nexmo.message.sendSms(from, to, text,(err,response)=>{
-//   if (err) {
-//     console.log(err);
-//   } else {
-//     console.log(JSON.stringify(response, null, 2));
-//   }
-// });
 
 http.listen(PORT, function () {
   console.log("Server running on localhost: " + PORT);

@@ -12,6 +12,7 @@ module.exports = (req, res) => {
           console.log(establishment);
     
           var offerObj = {
+            user_id: req.body.user_id,
             establishment_id: req.body.establishment_id,
             name: req.body.name,
             description: req.body.description,

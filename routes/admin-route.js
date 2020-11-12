@@ -31,7 +31,8 @@ let retrieveEstablishmentStatistics = require("../modules/user/establishment.ret
 let retrieveEstablishmentTopEarners = require("../modules/user/establishment.retrieve-top-earners");
 let updateUserStatus = require("../modules/admin/admin-update-user-status");
 let retrieveAllPendingPromos = require("../modules/admin/admin-retrieve-allestablishment-promo");
-let retrieveAllPendingOffers = require("../modules/admin/admin-retrieve-allestablishment-offers")
+let retrieveAllPendingOffers = require("../modules/admin/admin-retrieve-allestablishment-offers");
+let getNotifications = require("../modules/admin/admin-retrieve-notifications")
 const { Establishment } = require("../models/user");
 
 function verifyToken(req, res, next) {
@@ -103,6 +104,10 @@ router.get(
 
 router.get("/admin/retrieve/total-users", async (req, res) => {
   totalUsers(req, res);
+});
+
+router.get("/admin/retrieve/notifications", async (req, res) => {
+  getNotifications(req, res);
 });
 
 router.put("/admin/update/store-status", (req, res) => {

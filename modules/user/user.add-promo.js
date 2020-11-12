@@ -12,6 +12,7 @@ Model.Establishment.findOne(
       console.log(establishment);
 
       var promoObj = {
+        user_id: req.body.user_id,
         establishment_id: req.body.establishment_id,
         name: req.body.name,
         points: req.body.points,

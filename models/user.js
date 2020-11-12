@@ -100,6 +100,10 @@ const imageSchema = new Schema({
 
 //offer
 const offerSchema = new Schema({
+  user_id: {
+    type: String,
+    required: true
+  },
   establishment_id: {
     type: String,
     required: true,
@@ -132,6 +136,10 @@ const offerSchema = new Schema({
 
 //promo
 const promoSchema = new Schema({
+  user_id: {
+    type: String,
+    required: true
+  },
   establishment_id: {
     type: String,
     required: true,
@@ -244,6 +252,14 @@ const notificationSchema = new Schema({
   description: String,
   date_created: String
 })
+
+const adminNotificationSchema = new Schema({
+  image: String,
+  request_type: String,
+  description: String,
+  datetime: String
+})
+
 userSchema.pre("save", function (next) {
   this.firstname = this.firstname.replace(
     /\b[a-z]|['_][a-z]|\B[A-Z]/g,
@@ -309,6 +325,11 @@ notificationSchema.pre("save", function (next) {
   if (!this.date_created) this.date_created = currentDate;
   next();
 });
+adminNotificationSchema.pre("save", function (next) {
+  var currentDate = new Date();
+  if (!this.datetime) this.datetime = currentDate;
+  next();
+});
 const Establishment = mongoose.model(
   "Establishment",
   establishmentSchema,
@@ -331,6 +352,7 @@ const UserRewardObtained = mongoose.model(
 const Post = mongoose.model("Post", postSchema,"post");
 const Delivery = mongoose.model("Delivery", deliverySchema,"delivery");
 const Notification = mongoose.model("Notification", notificationSchema,"notification");
+const AdminNotification = mongoose.model("AdminNotification", adminNotificationSchema,"admin_notification");
 module.exports = {
   Establishment,
   User,
@@ -341,5 +363,6 @@ module.exports = {
   UserRewardObtained,
   Post,
   Delivery,
-  Notification
+  Notification,
+  AdminNotification
 };
