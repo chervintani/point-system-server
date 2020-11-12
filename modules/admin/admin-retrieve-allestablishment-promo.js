@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
       establishments[index].promos.forEach((promo) => {
         result.push({
           establishment_name: establishments[index].name,
-          promos: promo,
+          promo: promo,
         });
       });
     }
