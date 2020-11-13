@@ -4,13 +4,21 @@ let successResponse = require("../../helpers/success-response");
 let response = null;
 
 module.exports = (req, res) => {
-  Model.Establishment.findOne({ _id: req.body._id }, (err, establishment) => {
+  Model.Establishment.findOne({ _id: req.body._id }, async (err, establishment) => {
     if (err) {
       response = errorResponse(404, err, "Document ID not found!");
       return res.status(response.status).send(response);
     } else {
       if (establishment) {
         console.log(establishment);
+        
+        let post = await Model.Post.find({image: req.body.logo});
+        post.title = "Updated store";
+        post.description = `${establishment.name} just updated their store, check out what's new!`;
+        post.image = req.body.logo;
+        post.date_created = new Date();
+        await post.save();
+
         establishment.name = req.body.name;
         establishment.logo = req.body.logo;
         establishment.website = req.body.website;
@@ -20,6 +28,7 @@ module.exports = (req, res) => {
         // establishment.status = req.body.status;
         establishment.support_delivery = req.body.support_delivery;
 
+        
         establishment.save((err, result) => {
           if (err) {
             response = errorResponse(500, err, "Save failed!");

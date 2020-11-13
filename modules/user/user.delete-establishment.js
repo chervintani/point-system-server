@@ -6,6 +6,8 @@ let response = null;
 module.exports = async (req, res) => {
     try {
         let establishment = await Model.Establishment.deleteOne({_id: req.params.id});
+        await Model.Post.deleteMany({ establishment_id: req.params.id });
+
         response = successResponse(200, establishment,"Deleted successfully!");
         res.status(response.status).send(response);
     } catch (error) {
