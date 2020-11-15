@@ -13,7 +13,7 @@ module.exports = (req, res) => {
         console.log(establishment);
         
         let post = await Model.Post.findOne({image: req.body.logo});
-        post.title = "Updated store";
+        post.title = "A store is updated";
         post.description = `${establishment.name} just updated their store, check out what's new!`;
         post.image = req.body.logo;
         post.date_created = new Date();
