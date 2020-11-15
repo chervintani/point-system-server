@@ -33,6 +33,7 @@ let addLike = require("../modules/user/user.add-like");
 let removeLike = require("../modules/user/user.remove-like");
 let deleteEstablishment = require("../modules/user/user.delete-establishment");
 let checkPhoneNumber = require("../modules/user/check-mobile-phone");
+let deleteNotifications = require("../modules/user/user.delete-notifications");
 //establishment
 let retrieveStatistics = require("../modules/user/establishment.retrieve-statistics");
 let retrieveTopEarners = require("../modules/user/establishment.retrieve-top-earners");
@@ -156,6 +157,10 @@ router.get("/user/check/mobile-number/:phone_number", (req, res) => {
 
 router.delete("/user/delete/establishment/:id", (req, res) => {
   deleteEstablishment(req, res);
+});
+
+router.delete("/user/delete/notifications/:id", (req, res) => {
+  deleteNotifications(req, res);
 });
 
 //this route below is for establishments
