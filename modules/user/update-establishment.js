@@ -15,7 +15,7 @@ module.exports = (req, res) => {
           console.log(establishment);
 
           let post = await Model.Post.findOne({
-            establishment_id: req.body.id,
+            establishment_id: req.body._id,
             type: "store",
           });
           post.title = "A store is updated";
