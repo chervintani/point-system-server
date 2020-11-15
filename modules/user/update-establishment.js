@@ -12,7 +12,7 @@ module.exports = (req, res) => {
       if (establishment) {
         console.log(establishment);
         
-        let post = await Model.Post.find({image: req.body.logo});
+        let post = await Model.Post.findOne({image: req.body.logo});
         post.title = "Updated store";
         post.description = `${establishment.name} just updated their store, check out what's new!`;
         post.image = req.body.logo;
