@@ -44,7 +44,7 @@ io.on("connection", (socket) => {
 
 });
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: "50mb"}));
 app.use(cors());
 app.use("/api", adminApi);
 app.use("/api", userApi);
