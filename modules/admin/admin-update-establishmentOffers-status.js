@@ -16,7 +16,7 @@ try {
         establishment_id: req.body.establishment_id,
         type: 'offer',
         title: "New offer!",
-        description: `${establishment.name} has a new offer just for you. Visit store now and view offers that you might like and you can gain points!`,
+        description: `${establishment.name} has a new offer just for you. Visit the store now and view offers that you might like and avail to gain points!`,
         image: offer.image,
         likes: []
       });
