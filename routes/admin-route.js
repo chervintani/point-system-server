@@ -32,7 +32,9 @@ let retrieveEstablishmentTopEarners = require("../modules/user/establishment.ret
 let updateUserStatus = require("../modules/admin/admin-update-user-status");
 let retrieveAllPendingPromos = require("../modules/admin/admin-retrieve-allestablishment-promo");
 let retrieveAllPendingOffers = require("../modules/admin/admin-retrieve-allestablishment-offers");
+let establishmentStats = require("../modules/user/establishment.retrieve-statistics");
 let getNotifications = require("../modules/admin/admin-retrieve-notifications")
+let updateUserAndPass = require("../modules/admin/admin-update-adminUserandPass");
 const { Establishment } = require("../models/user");
 
 function verifyToken(req, res, next) {
@@ -106,9 +108,11 @@ router.get("/admin/retrieve/total-users", async (req, res) => {
   totalUsers(req, res);
 });
 
-router.get("/admin/retrieve/notifications", async (req, res) => {
-  getNotifications(req, res);
+router.get("/admin/retrieve/establishment-stats", async (req, res) => {
+  establishmentStats(req, res);
 });
+
+
 
 router.put("/admin/update/store-status", (req, res) => {
   console.log(req.body);
@@ -134,6 +138,10 @@ router.get(
     retrieveUserStoreSubscribe(req, res);
   }
 );
+
+router.get("/admin/retrieve/notifications", async (req, res) => {
+  getNotifications(req, res);
+});
 
 router.get(
   "/admin/retrieve/establishment/establishment-employees/:id",
@@ -181,6 +189,10 @@ router.get("/admin/retrieve/allestablishment-promo-waiting", async (req, res) =>
 
 router.get("/admin/retrieve/allestablishment-offer-waiting", async (req, res) => {
   retrieveAllPendingOffers(req,res);
+});
+
+router.put("/admin/retrieve/userAndPass", async (req, res) => {
+  updateUserAndPass(req,res);
 });
 
 module.exports = router;

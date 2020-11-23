@@ -6,7 +6,7 @@ let response = null;
 module.exports = (req, res) => {
   Model.Post.find(
     {},
-    { _id: 1, title: 1,description: 1, image: 1, date_created: 1 },
+    {},
     {sort: {_id:-1}},
     (err, post) => {
       if (err) {
