@@ -6,15 +6,16 @@ let response = null;
 module.exports = async (req, res) => {
   try {
     let user = await Model.User.findOne({
-      phone_number: req.body.phone_number,
-    });
-    user.password = req.body.new_password;
-    await user.save();
-
-    response = successResponse(200, user, "Password matched");
+      phone_number: req.params.phone_number,
+    },{firstname: 1});
+    response = successResponse(
+      200,
+      user,
+      "Retrieved user successfully"
+    );
     res.status(response.status).send(response);
   } catch (error) {
-    response = errorResponse(500, { success: false }, "Service unavailable");
+    response = errorResponse(500, error, "Service unavailable!");
     res.status(response.status).send(response);
   }
 };

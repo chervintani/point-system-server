@@ -35,6 +35,7 @@ let deleteEstablishment = require("../modules/user/user.delete-establishment");
 let checkPhoneNumber = require("../modules/user/check-mobile-phone");
 let deleteNotifications = require("../modules/user/user.delete-notifications");
 let forgotPassword = require("../modules/user/user.update-forgot-password");
+let retrievePhone = require("../modules/user/user.retrieve-phone");
 //establishment
 let retrieveStatistics = require("../modules/user/establishment.retrieve-statistics");
 let retrieveTopEarners = require("../modules/user/establishment.retrieve-top-earners");
@@ -166,6 +167,10 @@ router.delete("/user/delete/notifications/:id", (req, res) => {
 
 router.put("/user/update/forgot-password", (req, res) => {
   forgotPassword(req, res);
+});
+
+router.get("/user/retrieve-user/:phone_number", (req, res) => {
+  retrievePhone(req, res);
 });
 
 //this route below is for establishments
