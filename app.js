@@ -50,6 +50,7 @@ app.use("/api", adminApi);
 app.use("/api", userApi);
 app.use("/api", imageApi);
 app.use("/uploads", express.static(path.join(__dirname + "/uploads")));
+app.use("/apk", express.static(path.join(__dirname + "/apk")));
 
 app.get("/", (req, res) => {
   res.send("we are live v3!");
