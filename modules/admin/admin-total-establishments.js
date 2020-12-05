@@ -5,7 +5,6 @@ let response = null;
 
 module.exports = async(req, res) => {
   Model.Establishment.find(
-    {status:"Accepted"},
     {},
     {sort: {_id:-1}},
     (err, stores) => {
