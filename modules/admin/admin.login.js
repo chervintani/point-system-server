@@ -23,7 +23,7 @@ module.exports = (req, res) => {
               console.log(response)
               res.status(response.status).send(response);
           } else {
-            response = errorResponse(401,{exists: true}, "Incorrect password!")
+            response = errorResponse(200,{error: true}, "Incorrect password!")
             res.status(response.status).send(response)
           }
         })
