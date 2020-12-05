@@ -5,7 +5,7 @@ let response = null;
 
 module.exports = async(req, res) => {
   Model.Establishment.find(
-    {},
+    {$or:[{status:"Accepted"},{status:"Deactivated"}]},
     {},
     {sort: {_id:-1}},
     (err, stores) => {
