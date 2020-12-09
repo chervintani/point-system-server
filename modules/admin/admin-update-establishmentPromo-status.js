@@ -23,7 +23,7 @@ try {
 
       await post.save();
     }else{
-      await Model.Post.deleteMany({image: req.body.image})
+      await Model.Post.deleteMany({image: promo.image})
        
     }
 
