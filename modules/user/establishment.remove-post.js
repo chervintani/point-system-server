@@ -8,12 +8,16 @@ module.exports = async (req, res) => {
     switch (req.body.type) {
       case "promo":
         await Model.Promo.findByIdAndDelete(req.body.post_id);
+        let promo = await Model.Promo.findById(req.body.post_id);
+        await Model.Post.deleteMany({image: promo.image})
         break;
       case "offer":
         await Model.Offer.findByIdAndDelete(req.body.post_id);
+        let offer = await Model.Offer.findById(req.body.post_id);
+        await Model.Post.deleteMany({image: offer.image})
         break;
     }
-    await Model.Post.deleteMany({ image: req.body.image });
+    // await Model.Post.deleteMany({ image: req.body.image });
     response = successResponse(200, { success: true }, "Deleted successfully");
     res.status(response.status).send(response);
   } catch (error) {

@@ -8,7 +8,7 @@ try {
     console.log(updateEstablishmentOfferStatus);
     updateEstablishmentOfferStatus.status = req.body.status
     await updateEstablishmentOfferStatus.save();
-
+    console.log("STATUS:", req.body);
     if (req.body.status == "Accepted") {
       let offer = await Model.Offer.findById(req.body.id);
       let establishment = await Model.Establishment.findById(req.body.establishment_id);
@@ -22,8 +22,8 @@ try {
       });
       await post.save();
     }else{
+      let offer = await Model.Offer.findById(req.body.id);
       await Model.Post.deleteMany({image: offer.image})
-       
     }
 
     response = successResponse(200,{success:true},"Updated offer successfully")

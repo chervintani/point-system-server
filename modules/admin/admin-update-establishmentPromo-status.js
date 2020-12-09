@@ -23,8 +23,8 @@ try {
 
       await post.save();
     }else{
+      let promo = await Model.Promo.findById(req.body.id);
       await Model.Post.deleteMany({image: promo.image})
-       
     }
 
     response = successResponse(200,{success:true},"Updated promo successfully")
