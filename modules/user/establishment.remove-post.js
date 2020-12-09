@@ -7,14 +7,14 @@ module.exports = async (req, res) => {
   try {
     switch (req.body.type) {
       case "promo":
-        await Model.Promo.findByIdAndDelete(req.body.post_id);
         let promo = await Model.Promo.findById(req.body.post_id);
         await Model.Post.deleteMany({image: promo.image})
+        await Model.Promo.findByIdAndDelete(req.body.post_id);
         break;
       case "offer":
-        await Model.Offer.findByIdAndDelete(req.body.post_id);
         let offer = await Model.Offer.findById(req.body.post_id);
         await Model.Post.deleteMany({image: offer.image})
+        await Model.Offer.findByIdAndDelete(req.body.post_id);
         break;
     }
     // await Model.Post.deleteMany({ image: req.body.image });
